@@ -1,0 +1,112 @@
+############################################
+# EatEase – Auth Routes REST Client
+# Use with VS Code REST Client Extension
+############################################
+
+@host = http://localhost:5000
+@baseUrl = {{host}}/api/auth
+@token = PASTE_JWT_TOKEN_HERE
+
+###########
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@eatease.com",
+  "password": "Admin@123"
+}
+
+
+### Delivery Person Registration
+POST http://localhost:5000/api/delivery/register
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTdiOGZlOGIzMTIyYzZmNDNkZTQwZiIsInJvbGUiOiJkZWxpdmVyeSIsImlhdCI6MTc2NzM1NjY3MCwiZXhwIjoxNzY3OTYxNDcwfQ.DyukdTw1R3PPQMEeUj03egbCWB01fER9BZUQBqcUmtA
+Content-Type: application/json
+
+{
+  "vehicleType": "bike",
+  "vehicleNumber": "DL01AB1234",
+  "drivingLicense": "DL-1234567890"
+}
+
+############################################
+# 1️⃣ REGISTER USER
+############################################
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "Admin",
+  "email": "suresh123@gmail.com",
+  "password": "$2a$10$HASHED_PASSWORD",
+  "role": "admin",
+  "isActive": true
+}
+
+
+
+############################################
+# 2️⃣ REGISTER RESTAURANT OWNER
+############################################
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "Owner One",
+  "email": "owner@test.com",
+  "password": "Owner@123",
+  "role": "owner",
+  "phone": "9123456789",
+  "address": "Bangalore"
+}
+
+
+############################################
+# 3️⃣ LOGIN (USER / OWNER)
+############################################
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "suresh@test.com",
+  "password": "Password@123"
+}
+
+# 👉 Copy token from response and paste into @token
+
+
+############################################
+# 4️⃣ GET CURRENT LOGGED-IN USER
+############################################
+GET {{baseUrl}}/me
+Authorization: Bearer {{token}}
+
+
+############################################
+# 5️⃣ UPDATE USER PROFILE
+############################################
+PUT {{baseUrl}}/update-profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Suresh Updated",
+  "phone": "9999999999",
+  "address": "Chennai",
+  "preferences": {
+    "dietary": ["vegetarian"],
+    "cuisines": ["South Indian"]
+  }
+}
+
+
+############################################
+# 6️⃣ CHANGE PASSWORD
+############################################
+PUT {{baseUrl}}/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "Password@123",
+  "newPassword": "NewPassword@123"
+}
