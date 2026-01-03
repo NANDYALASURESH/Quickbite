@@ -1,0 +1,112 @@
+// Add this route before module.exports
+
+/**
+ * @route   PUT /api/owner/orders/:id/assign-delivery
+ * @desc    Assign delivery person to order
+ * @access  Private (Owner)
+ */
+router.put('/orders/:id/assign-delivery', async (req, res) => {
+  try {
+    const { deliveryPersonId } = req.body;
+    
+    if (!deliveryPersonId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Delivery person ID is required' 
+      });
+    }
+    
+    const restaurant = await Restaurant.findOne({ owner: req.user._id });
+    
+    if (!restaurant) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Restaurant not found' 
+      });
+    }
+    
+    const order = await Order.findOne({ 
+      _id: req.params.id, 
+      restaurant: restaurant._id 
+    });
+    
+    if (!order) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found or you do not have permission' 
+      });
+    }
+    
+    // Check if delivery person exists and is available
+    const DeliveryPerson = require('../models/DeliveryPerson');
+    const deliveryPerson = await DeliveryPerson.findById(deliveryPersonId);
+    
+    if (!deliveryPerson) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Delivery person not found' 
+      });
+    }
+    
+    if (!deliveryPerson.isAvailable || !deliveryPerson.isOnline) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Delivery person is not available' 
+      });
+    }
+    
+    // Assign delivery person
+    order.deliveryPerson = deliveryPersonId;
+    order.status = 'confirmed';
+    await order.save();
+    
+    // Update delivery person
+    deliveryPerson.activeOrder = order._id;
+    deliveryPerson.isAvailable = false;
+    await deliveryPerson.save();
+    
+    res.status(200).json({
+      success: true,
+      message: 'Delivery person assigned successfully',
+      order
+    });
+    
+  } catch (error) {
+    console.error('Assign delivery person error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to assign delivery person', 
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * @route   GET /api/owner/available-delivery-persons
+ * @desc    Get list of available delivery persons
+ * @access  Private (Owner)
+ */
+router.get('/available-delivery-persons', async (req, res) => {
+  try {
+    const DeliveryPerson = require('../models/DeliveryPerson');
+    
+    const deliveryPersons = await DeliveryPerson.find({
+      isOnline: true,
+      isAvailable: true
+    }).populate('user', 'name phone');
+    
+    res.status(200).json({
+      success: true,
+      count: deliveryPersons.length,
+      deliveryPersons
+    });
+    
+  } catch (error) {
+    console.error('Get delivery persons error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch delivery persons', 
+      error: error.message 
+    });
+  }
+});
