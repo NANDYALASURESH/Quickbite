@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Loader from './components/Loader';
+import Welcome from './pages/Welcome';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import UserHome from './pages/user/Home';
@@ -47,8 +48,10 @@ function AppContent({ currentPage, setCurrentPage }) {
         {!user ? (
           currentPage === 'register' ? (
             <Register setCurrentPage={setCurrentPage} />
-          ) : (
+          ) : currentPage === 'login' ? (
             <Login setCurrentPage={setCurrentPage} />
+          ) : (
+            <Welcome setCurrentPage={setCurrentPage} />
           )
         ) : user.role === 'user' ? (
           <>

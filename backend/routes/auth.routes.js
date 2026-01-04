@@ -173,6 +173,101 @@ router.post('/login', async (req, res) => {
 });
 
 /**
+ * @route   POST /api/auth/google
+ * @desc    Google OAuth login
+ * @access  Public
+ */
+router.post('/google', async (req, res) => {
+  try {
+    const { credential, role } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential is required'
+      });
+    }
+
+    // Verify Google token
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    let payload;
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (verifyError) {
+      console.error('Google token verification failed:', verifyError);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Google token'
+      });
+    }
+
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ $or: [{ email }, { googleId }] });
+
+    if (user) {
+      // Update googleId if not set
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+
+      // Check if account is active
+      if (!user.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: 'Account is deactivated. Please contact support.'
+        });
+      }
+    } else {
+      // Create new user
+      const userRole = role && ['user', 'owner', 'delivery'].includes(role) ? role : 'user';
+
+      user = await User.create({
+        name,
+        email,
+        googleId,
+        role: userRole,
+        isActive: true
+      });
+    }
+
+    // Generate token
+    const token = generateToken(user._id, user.role);
+
+    res.status(200).json({
+      success: true,
+      message: 'Google login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        address: user.address,
+        loyaltyPoints: user.loyaltyPoints
+      }
+    });
+
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Google login failed',
+      error: error.message
+    });
+  }
+});
+
+/**
  * @route   GET /api/auth/me
  * @desc    Get current logged in user
  * @access  Private

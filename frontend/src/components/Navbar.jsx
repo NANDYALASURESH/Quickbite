@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { ChefHat, LogOut, Menu as MenuIcon, X, ShoppingCart, Package, Store, Users, User } from 'lucide-react';
+import {
+  ChefHat, LogOut, Menu as MenuIcon, X, ShoppingCart,
+  Package, Store, Users, User, Bell, Search
+} from 'lucide-react';
 
 const Navbar = ({ currentPage, setCurrentPage }) => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const getNavItems = () => {
     if (user.role === 'user') {
@@ -15,14 +19,12 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
         { id: 'restaurants', label: 'Restaurants', icon: Store },
         { id: 'cart', label: 'Cart', icon: ShoppingCart, badge: cartItems.length },
         { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'profile', label: 'Profile', icon: User }
       ];
     } else if (user.role === 'owner') {
       return [
         { id: 'home', label: 'Dashboard', icon: ChefHat },
         { id: 'menu', label: 'Menu', icon: Store },
         { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'profile', label: 'Profile', icon: User }
       ];
     } else if (user.role === 'admin') {
       return [
@@ -34,7 +36,6 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
       return [
         { id: 'home', label: 'Dashboard', icon: ChefHat },
         { id: 'orders', label: 'Orders', icon: Package },
-        { id: 'profile', label: 'Profile', icon: User }
       ];
     }
     return [];
@@ -42,59 +43,143 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
 
   const navItems = getNavItems();
 
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!user.name) return 'U';
+    const names = user.name.split(' ');
+    if (names.length >= 2) {
+      return names[0][0] + names[1][0];
+    }
+    return names[0][0];
+  };
+
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-40">
+    <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 sm:h-18">
+
           {/* Logo */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setCurrentPage('home')}>
-            <ChefHat className="text-orange-500" size={32} />
-            <span className="text-2xl font-bold text-gray-800">EatEase</span>
+          <div
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group"
+            onClick={() => setCurrentPage('home')}
+          >
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all group-hover:scale-105">
+              <ChefHat className="text-white" size={24} />
+            </div>
+            <div>
+              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                QuickBite
+              </span>
+              <p className="hidden sm:block text-xs text-gray-500 -mt-1">Fast & Fresh Delivery</p>
+            </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-2">
             {navItems.map(item => {
               const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
               return (
                 <button
                   key={item.id}
                   onClick={() => setCurrentPage(item.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition relative ${currentPage === item.id
-                    ? 'bg-orange-500 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all ${isActive
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30'
+                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                     }`}
                 >
                   <Icon size={20} />
-                  <span className="font-medium">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
+
+                  {/* Badge */}
                   {item.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-lg">
                       {item.badge}
                     </span>
                   )}
                 </button>
               );
             })}
+          </div>
 
-            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-300">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-800">{user.name}</p>
-                <p className="text-xs text-orange-600 font-medium">{user.role.toUpperCase()}</p>
-              </div>
+          {/* Right Side - Desktop */}
+          <div className="hidden lg:flex items-center space-x-3">
+
+            {/* Notifications */}
+            <button className="relative p-2.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all">
+              <Bell size={22} />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+
+            {/* User Menu */}
+            <div className="relative">
               <button
-                onClick={logout}
-                className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center space-x-3 px-3 py-2 hover:bg-orange-50 rounded-xl transition-all group"
               >
-                <LogOut size={18} />
-                <span>Logout</span>
+                {/* Avatar */}
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-lg transition-all">
+                  {getUserInitials()}
+                </div>
+
+                {/* User Info */}
+                <div className="text-left hidden xl:block">
+                  <p className="text-sm font-semibold text-gray-800 leading-tight">{user.name}</p>
+                  <p className="text-xs text-orange-600 font-medium capitalize">{user.role}</p>
+                </div>
               </button>
+
+              {/* Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 top-14 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                  <div className="p-4 bg-gradient-to-r from-orange-500 to-red-500">
+                    <p className="text-sm font-semibold text-white">{user.name}</p>
+                    <p className="text-xs text-white/80 capitalize">{user.role} Account</p>
+                  </div>
+
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setCurrentPage('profile');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
+                    >
+                      <User size={18} />
+                      <span className="text-sm font-medium">My Profile</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setCurrentPage('orders');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
+                    >
+                      <Package size={18} />
+                      <span className="text-sm font-medium">My Orders</span>
+                    </button>
+                  </div>
+
+                  <div className="border-t border-gray-100 p-2">
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all text-left font-medium"
+                    >
+                      <LogOut size={18} />
+                      <span className="text-sm">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-700"
+            className="lg:hidden p-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all"
           >
             {isMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
           </button>
@@ -103,10 +188,25 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-3 space-y-2">
+        <div className="lg:hidden border-t border-gray-100 bg-white/95 backdrop-blur-md">
+          <div className="px-4 py-4 space-y-2">
+
+            {/* User Info - Mobile */}
+            <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl mb-4">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg">
+                {getUserInitials()}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">{user.name}</p>
+                <p className="text-xs text-white/80 capitalize">{user.role} Account</p>
+              </div>
+            </div>
+
+            {/* Nav Items - Mobile */}
             {navItems.map(item => {
               const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
               return (
                 <button
                   key={item.id}
@@ -114,15 +214,16 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                     setCurrentPage(item.id);
                     setIsMenuOpen(false);
                   }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition relative ${currentPage === item.id
-                    ? 'bg-orange-500 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all relative ${isActive
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                     }`}
                 >
                   <Icon size={20} />
                   <span className="font-medium">{item.label}</span>
+
                   {item.badge > 0 && (
-                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
                       {item.badge}
                     </span>
                   )}
@@ -130,16 +231,25 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
               );
             })}
 
+            {/* Profile - Mobile */}
+            <button
+              onClick={() => {
+                setCurrentPage('profile');
+                setIsMenuOpen(false);
+              }}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all"
+            >
+              <User size={20} />
+              <span className="font-medium">Profile</span>
+            </button>
+
+            {/* Logout - Mobile */}
             <div className="pt-3 mt-3 border-t border-gray-200">
-              <div className="mb-3">
-                <p className="text-sm font-medium text-gray-800">{user.name}</p>
-                <p className="text-xs text-orange-600 font-medium">{user.role.toUpperCase()}</p>
-              </div>
               <button
                 onClick={logout}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-medium shadow-lg"
               >
-                <LogOut size={18} />
+                <LogOut size={20} />
                 <span>Logout</span>
               </button>
             </div>
