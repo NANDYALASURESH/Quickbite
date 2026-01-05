@@ -39,7 +39,7 @@ const Login = ({ setCurrentPage }) => {
       setError('');
 
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/api/auth/google`, {
+      const response = await fetch(`${apiUrl}/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -217,7 +217,6 @@ const Login = ({ setCurrentPage }) => {
                       size="large"
                       text="signin_with"
                       shape="rectangular"
-                      width="100%"
                     />
                   </div>
                 </div>
