@@ -85,8 +85,8 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                   key={item.id}
                   onClick={() => setCurrentPage(item.id)}
                   className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all ${isActive
-                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30'
-                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                     }`}
                 >
                   <Icon size={20} />
@@ -119,9 +119,17 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                 className="flex items-center space-x-3 px-3 py-2 hover:bg-orange-50 rounded-xl transition-all group"
               >
                 {/* Avatar */}
-                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-lg transition-all">
-                  {getUserInitials()}
-                </div>
+                {user.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-orange-200 shadow-md group-hover:shadow-lg transition-all"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-lg transition-all">
+                    {getUserInitials()}
+                  </div>
+                )}
 
                 {/* User Info */}
                 <div className="text-left hidden xl:block">
@@ -193,9 +201,17 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
 
             {/* User Info - Mobile */}
             <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl mb-4">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {getUserInitials()}
-              </div>
+              {user.profilePicture ? (
+                <img
+                  src={user.profilePicture}
+                  alt={user.name}
+                  className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {getUserInitials()}
+                </div>
+              )}
               <div>
                 <p className="text-sm font-semibold text-white">{user.name}</p>
                 <p className="text-xs text-white/80 capitalize">{user.role} Account</p>
@@ -215,8 +231,8 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                     setIsMenuOpen(false);
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all relative ${isActive
-                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                     }`}
                 >
                   <Icon size={20} />
