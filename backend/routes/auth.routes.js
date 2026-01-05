@@ -213,11 +213,17 @@ router.post('/google', async (req, res) => {
     let user = await User.findOne({ $or: [{ email }, { googleId }] });
 
     if (user) {
-      // Update googleId if not set
+      // Update googleId and profile picture if not set
       if (!user.googleId) {
         user.googleId = googleId;
-        await user.save();
       }
+      if (picture && !user.profilePicture) {
+        user.profilePicture = picture;
+      }
+      if (!user.emailVerified) {
+        user.emailVerified = true;
+      }
+      await user.save();
 
       // Check if account is active
       if (!user.isActive) {
@@ -234,6 +240,8 @@ router.post('/google', async (req, res) => {
         name,
         email,
         googleId,
+        profilePicture: picture || null,
+        emailVerified: true, // Google accounts are pre-verified
         role: userRole,
         isActive: true
       });
@@ -253,7 +261,10 @@ router.post('/google', async (req, res) => {
         role: user.role,
         phone: user.phone,
         address: user.address,
-        loyaltyPoints: user.loyaltyPoints
+        loyaltyPoints: user.loyaltyPoints,
+        profilePicture: user.profilePicture,
+        emailVerified: user.emailVerified,
+        hasGoogleLinked: !!user.googleId
       }
     });
 
@@ -367,6 +378,196 @@ router.put('/change-password', authenticate, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to change password',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   POST /api/auth/link-google
+ * @desc    Link Google account to existing user
+ * @access  Private
+ */
+router.post('/link-google', authenticate, async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential is required'
+      });
+    }
+
+    // Verify Google token
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    let payload;
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (verifyError) {
+      console.error('Google token verification failed:', verifyError);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Google token'
+      });
+    }
+
+    const { sub: googleId, email, picture } = payload;
+
+    // Check if email matches current user
+    if (email !== req.user.email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google account email does not match your account email'
+      });
+    }
+
+    // Check if this Google account is already linked to another user
+    const existingUser = await User.findOne({ googleId, _id: { $ne: req.user._id } });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'This Google account is already linked to another user'
+      });
+    }
+
+    // Update user with Google ID and profile picture
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        googleId,
+        profilePicture: picture || req.user.profilePicture,
+        emailVerified: true
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Google account linked successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        emailVerified: user.emailVerified,
+        hasGoogleLinked: !!user.googleId
+      }
+    });
+
+  } catch (error) {
+    console.error('Link Google account error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to link Google account',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   POST /api/auth/unlink-google
+ * @desc    Unlink Google account from user
+ * @access  Private
+ */
+router.post('/unlink-google', authenticate, async (req, res) => {
+  try {
+    // Get user with password to check if they have one
+    const user = await User.findById(req.user._id).select('+password');
+
+    if (!user.googleId) {
+      return res.status(400).json({
+        success: false,
+        message: 'No Google account is linked to this user'
+      });
+    }
+
+    // Check if user has a password set
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot unlink Google account. Please add a password first to ensure you can still login.'
+      });
+    }
+
+    // Unlink Google account
+    user.googleId = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Google account unlinked successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        hasGoogleLinked: false
+      }
+    });
+
+  } catch (error) {
+    console.error('Unlink Google account error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to unlink Google account',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   POST /api/auth/add-password
+ * @desc    Add password to Google-only account
+ * @access  Private
+ */
+router.post('/add-password', authenticate, async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters'
+      });
+    }
+
+    // Get user with password field
+    const user = await User.findById(req.user._id).select('+password');
+
+    if (user.password) {
+      return res.status(400).json({
+        success: false,
+        message: 'This account already has a password. Use change-password endpoint instead.'
+      });
+    }
+
+    // Set password (will be hashed by pre-save hook)
+    user.password = password;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password added successfully. You can now login with email and password.'
+    });
+
+  } catch (error) {
+    console.error('Add password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add password',
       error: error.message
     });
   }

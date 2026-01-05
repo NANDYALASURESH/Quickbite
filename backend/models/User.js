@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true // Allows multiple null values
   },
+  profilePicture: {
+    type: String,
+    default: null // URL to profile picture (from Google or uploaded)
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false // Auto-set to true for Google users
+  },
   role: {
     type: String,
     enum: ['user', 'owner', 'admin', 'delivery'],
