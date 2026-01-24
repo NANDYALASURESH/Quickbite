@@ -20,22 +20,19 @@ import DeliveryDashboard from './components/DeliveryDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
-import { ThemeProvider } from './context/ThemeContext';
 
 // Main App Component
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
 
   return (
-    <ThemeProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <CartProvider>
-            <AppContent currentPage={currentPage} setCurrentPage={setCurrentPage} />
-          </CartProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        </CartProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 
