@@ -213,7 +213,7 @@ router.post('/google', async (req, res) => {
     let user = await User.findOne({ $or: [{ email }, { googleId }] });
 
     if (user) {
-      // Update googleId and profile picture if not set
+      // Existing user - update googleId and profile picture if not set
       if (!user.googleId) {
         user.googleId = googleId;
       }
@@ -233,16 +233,23 @@ router.post('/google', async (req, res) => {
         });
       }
     } else {
-      // Create new user
-      const userRole = role && ['user', 'owner', 'delivery'].includes(role) ? role : 'user';
+      // New user - require role selection
+      if (!role || !['user', 'owner', 'delivery'].includes(role)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Role selection required for new users',
+          requiresRole: true
+        });
+      }
 
+      // Create new user with selected role
       user = await User.create({
         name,
         email,
         googleId,
         profilePicture: picture || null,
         emailVerified: true, // Google accounts are pre-verified
-        role: userRole,
+        role: role,
         isActive: true
       });
     }

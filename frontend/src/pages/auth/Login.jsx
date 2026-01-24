@@ -49,12 +49,12 @@ const Login = ({ setCurrentPage }) => {
       const data = await response.json();
 
       if (data.success) {
-        // User exists, login directly
+        // Existing user - login directly
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         window.location.reload();
-      } else if (data.message && data.message.includes('role')) {
-        // New user, need role selection
+      } else if (data.requiresRole || (data.message && data.message.includes('Role selection required'))) {
+        // New user - show role selection modal
         setPendingCredential(credentialResponse.credential);
         setShowRoleModal(true);
       } else {
