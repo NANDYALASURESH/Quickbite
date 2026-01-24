@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
 import NotificationBell from './NotificationBell';
 import {
   ChefHat, LogOut, Menu as MenuIcon, X, ShoppingCart,
-  Package, Store, Users, User, Bell, Search
+  Package, Store, Users, User, Bell, Search, Moon, Sun
 } from 'lucide-react';
 
 const Navbar = ({ currentPage, setCurrentPage }) => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
+  const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -107,6 +109,15 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
           {/* Right Side - Desktop */}
           <div className="hidden lg:flex items-center space-x-3">
 
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun size={22} /> : <Moon size={22} />}
+            </button>
+
             {/* Notifications */}
             <NotificationBell />
 
@@ -136,102 +147,48 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                 </div>
               </button>
 
-              {/* Dropdown Menu - Modern Design */}
+              {/* Dropdown Menu */}
               {showUserMenu && (
-                <>
-                  {/* Backdrop */}
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowUserMenu(false)}
-                  />
-
-                  {/* Dropdown */}
-                  <div className="absolute right-0 top-16 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-fadeIn">
-                    {/* User Header with Avatar */}
-                    <div className="relative bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 p-6 pb-16">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-4">
-                          {user.profilePicture ? (
-                            <img
-                              src={user.profilePicture}
-                              alt={user.name}
-                              className="w-16 h-16 rounded-full object-cover border-4 border-white/30 shadow-lg"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-2xl font-bold border-4 border-white/30 shadow-lg">
-                              {getUserInitials()}
-                            </div>
-                          )}
-                          <div>
-                            <p className="text-white font-bold text-lg leading-tight">{user.name}</p>
-                            <p className="text-white/90 text-sm mt-0.5">{user.email}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Role Badge */}
-                      <div className="absolute bottom-4 left-6 right-6">
-                        <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-xl px-4 py-2 flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white text-sm font-medium capitalize">{user.role} Account</span>
-                          </div>
-                          {user.loyaltyPoints > 0 && (
-                            <span className="text-white text-xs font-semibold bg-white/20 px-2 py-1 rounded-full">
-                              ⭐ {user.loyaltyPoints} pts
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Menu Items */}
-                    <div className="p-3">
-                      <button
-                        onClick={() => {
-                          setCurrentPage('profile');
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 dark:hover:from-gray-700 dark:hover:to-gray-600 rounded-xl transition-all text-left group"
-                      >
-                        <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <User size={20} className="text-orange-600 dark:text-orange-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold">My Profile</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">View and edit profile</p>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setCurrentPage('orders');
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 dark:hover:from-gray-700 dark:hover:to-gray-600 rounded-xl transition-all text-left group"
-                      >
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Package size={20} className="text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold">My Orders</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Track your orders</p>
-                        </div>
-                      </button>
-                    </div>
-
-                    {/* Logout */}
-                    <div className="border-t border-gray-200 dark:border-gray-700 p-3">
-                      <button
-                        onClick={logout}
-                        className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl"
-                      >
-                        <LogOut size={18} />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
+                <div className="absolute right-0 top-14 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+                  <div className="p-4 bg-gradient-to-r from-orange-500 to-red-500">
+                    <p className="text-sm font-semibold text-white">{user.name}</p>
+                    <p className="text-xs text-white/80 capitalize">{user.role} Account</p>
                   </div>
-                </>
+
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setCurrentPage('profile');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg transition-all text-left"
+                    >
+                      <User size={18} />
+                      <span className="text-sm font-medium">My Profile</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setCurrentPage('orders');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg transition-all text-left"
+                    >
+                      <Package size={18} />
+                      <span className="text-sm font-medium">My Orders</span>
+                    </button>
+                  </div>
+
+                  <div className="border-t border-gray-100 dark:border-gray-700 p-2">
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all text-left font-medium"
+                    >
+                      <LogOut size={18} />
+                      <span className="text-sm">Logout</span>
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
