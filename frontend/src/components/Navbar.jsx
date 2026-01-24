@@ -57,7 +57,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
+    <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-18">
 
@@ -89,7 +89,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                   onClick={() => setCurrentPage(item.id)}
                   className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all ${isActive
                     ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30'
-                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400'
                     }`}
                 >
                   <Icon size={20} />
@@ -125,7 +125,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 px-3 py-2 hover:bg-orange-50 rounded-xl transition-all group"
+                className="flex items-center space-x-3 px-3 py-2 hover:bg-orange-50 dark:hover:bg-gray-700 rounded-xl transition-all group"
               >
                 {/* Avatar */}
                 {user.profilePicture ? (
@@ -142,14 +142,14 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
 
                 {/* User Info */}
                 <div className="text-left hidden xl:block">
-                  <p className="text-sm font-semibold text-gray-800 leading-tight">{user.name}</p>
-                  <p className="text-xs text-orange-600 font-medium capitalize">{user.role}</p>
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">{user.name}</p>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 font-medium capitalize">{user.role}</p>
                 </div>
               </button>
 
               {/* Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 top-14 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                <div className="absolute right-0 top-14 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                   <div className="p-4 bg-gradient-to-r from-orange-500 to-red-500">
                     <p className="text-sm font-semibold text-white">{user.name}</p>
                     <p className="text-xs text-white/80 capitalize">{user.role} Account</p>
@@ -161,7 +161,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                         setCurrentPage('profile');
                         setShowUserMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg transition-all text-left"
                     >
                       <User size={18} />
                       <span className="text-sm font-medium">My Profile</span>
@@ -172,14 +172,14 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                         setCurrentPage('orders');
                         setShowUserMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 rounded-lg transition-all text-left"
                     >
                       <Package size={18} />
                       <span className="text-sm font-medium">My Orders</span>
                     </button>
                   </div>
 
-                  <div className="border-t border-gray-100 p-2">
+                  <div className="border-t border-gray-100 dark:border-gray-700 p-2">
                     <button
                       onClick={logout}
                       className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all text-left font-medium"
@@ -205,7 +205,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white/95 backdrop-blur-md">
+        <div className="lg:hidden border-t border-gray-100 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md">
           <div className="px-4 py-4 space-y-2">
 
             {/* User Info - Mobile */}
@@ -241,7 +241,7 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all relative ${isActive
                     ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400'
                     }`}
                 >
                   <Icon size={20} />
@@ -262,14 +262,14 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                 setCurrentPage('profile');
                 setIsMenuOpen(false);
               }}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all"
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700 hover:text-orange-600 dark:hover:text-orange-400 transition-all"
             >
               <User size={20} />
               <span className="font-medium">Profile</span>
             </button>
 
             {/* Logout - Mobile */}
-            <div className="pt-3 mt-3 border-t border-gray-200">
+            <div className="pt-3 mt-3 border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={logout}
                 className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-medium shadow-lg"
