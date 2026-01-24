@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
+import NotificationBell from './NotificationBell';
 import {
   ChefHat, LogOut, Menu as MenuIcon, X, ShoppingCart,
-  Package, Store, Users, User, Bell, Search
+  Package, Store, Users, User, Bell, Search, Moon, Sun
 } from 'lucide-react';
 
 const Navbar = ({ currentPage, setCurrentPage }) => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
+  const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -106,11 +109,17 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
           {/* Right Side - Desktop */}
           <div className="hidden lg:flex items-center space-x-3">
 
-            {/* Notifications */}
-            <button className="relative p-2.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all">
-              <Bell size={22} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun size={22} /> : <Moon size={22} />}
             </button>
+
+            {/* Notifications */}
+            <NotificationBell />
 
             {/* User Menu */}
             <div className="relative">
