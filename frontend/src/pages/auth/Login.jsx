@@ -28,9 +28,44 @@ const Login = ({ setCurrentPage }) => {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    // Store credential and show role selection modal
-    setPendingCredential(credentialResponse.credential);
-    setShowRoleModal(true);
+    try {
+      setLoading(true);
+      setError('');
+
+      const apiUrl = import.meta.env.VITE_API_URL;
+
+      // First, try to login without role (for existing users)
+      const response = await fetch(`${apiUrl}/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          credential: credentialResponse.credential,
+          // Don't send role for existing users
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // User exists, login directly
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.reload();
+      } else if (data.message && data.message.includes('role')) {
+        // New user, need role selection
+        setPendingCredential(credentialResponse.credential);
+        setShowRoleModal(true);
+      } else {
+        setError(data.message || 'Google login failed');
+      }
+    } catch (err) {
+      console.error('Google login error:', err);
+      setError('Failed to login with Google. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRoleSelect = async (selectedRole) => {
@@ -68,6 +103,7 @@ const Login = ({ setCurrentPage }) => {
     } finally {
       setLoading(false);
       setPendingCredential(null);
+      setShowRoleModal(false);
     }
   };
 
