@@ -34,8 +34,14 @@ const RoleSelectionModal = ({ isOpen, onClose, onSelectRole }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 relative animate-fadeIn">
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4 relative animate-fadeIn"
+                onClick={(e) => e.stopPropagation()}
+            >
                 {/* Close button */}
                 <button
                     onClick={onClose}
@@ -57,10 +63,10 @@ const RoleSelectionModal = ({ isOpen, onClose, onSelectRole }) => {
                             key={role.id}
                             onClick={() => handleRoleSelect(role.id)}
                             className={`p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${role.color === 'blue'
-                                    ? 'border-blue-200 hover:border-blue-500 hover:bg-blue-50'
-                                    : role.color === 'purple'
-                                        ? 'border-purple-200 hover:border-purple-500 hover:bg-purple-50'
-                                        : 'border-green-200 hover:border-green-500 hover:bg-green-50'
+                                ? 'border-blue-200 hover:border-blue-500 hover:bg-blue-50'
+                                : role.color === 'purple'
+                                    ? 'border-purple-200 hover:border-purple-500 hover:bg-purple-50'
+                                    : 'border-green-200 hover:border-green-500 hover:bg-green-50'
                                 }`}
                         >
                             <div className="flex flex-col items-center text-center space-y-3">

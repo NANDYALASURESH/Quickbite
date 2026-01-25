@@ -189,15 +189,26 @@ const UserHome = ({ setCurrentPage }) => {
               >
                 {/* Restaurant Image */}
                 <div className="relative h-56 overflow-hidden">
-                  {/* Background Image based on cuisine */}
-                  <img
-                    src={`https://source.unsplash.com/800x600/?${restaurant.cuisine[0].toLowerCase()}-food,restaurant`}
-                    alt={restaurant.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    onError={(e) => {
-                      e.target.src = `https://source.unsplash.com/800x600/?food,restaurant`;
-                    }}
-                  />
+                  {restaurant.images && restaurant.images[0] ? (
+                    <img
+                      src={restaurant.images[0]}
+                      alt={restaurant.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://source.unsplash.com/800x600/?${restaurant.cuisine[0].toLowerCase()}-food,restaurant`;
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={`https://source.unsplash.com/800x600/?${restaurant.cuisine[0].toLowerCase()}-food,restaurant`}
+                      alt={restaurant.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.src = `https://source.unsplash.com/800x600/?food,restaurant`;
+                      }}
+                    />
+                  )}
 
                   {/* Gradient Overlay for better text visibility */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>

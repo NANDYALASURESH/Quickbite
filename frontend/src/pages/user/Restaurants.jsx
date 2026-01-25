@@ -5,6 +5,7 @@ import { Store, Star, Clock, Plus, Minus, ShoppingCart, X, Search, Filter } from
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 
+// Updated: 2026-01-25 05:50 - Images should now display
 const UserRestaurants = ({ setCurrentPage }) => {
   const { token, API_URL } = useAuth();
   const { addToCart, cartItems } = useCart();
@@ -225,9 +226,21 @@ const UserRestaurants = ({ setCurrentPage }) => {
                     key={item._id}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition"
                   >
-                    <div className="h-48 bg-gradient-to-r from-orange-300 to-red-300 flex items-center justify-center">
-                      <Store className="text-white" size={48} />
-                    </div>
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-48 w-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
+                        }}
+                      />
+                    ) : (
+                      <div className="h-48 bg-gradient-to-r from-orange-300 to-red-300 flex items-center justify-center">
+                        <Store className="text-white" size={48} />
+                      </div>
+                    )}
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
@@ -297,7 +310,7 @@ const UserRestaurants = ({ setCurrentPage }) => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">All Restaurants</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">All Restaurants 🍽️</h1>
 
         {/* Search and Filter Section for Restaurants */}
         <div className="mb-8 space-y-4">
@@ -350,9 +363,21 @@ const UserRestaurants = ({ setCurrentPage }) => {
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer card-hover"
                 onClick={() => handleRestaurantClick(restaurant)}
               >
-                <div className="h-48 bg-gradient-to-r from-orange-400 to-red-400 flex items-center justify-center">
-                  <Store className="text-white" size={64} />
-                </div>
+                {restaurant.images && restaurant.images[0] ? (
+                  <img
+                    src={restaurant.images[0]}
+                    alt={restaurant.name}
+                    className="h-48 w-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
+                    }}
+                  />
+                ) : (
+                  <div className="h-48 bg-gradient-to-r from-orange-400 to-red-400 flex items-center justify-center">
+                    <Store className="text-white" size={64} />
+                  </div>
+                )}
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{restaurant.description}</p>

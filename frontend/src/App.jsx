@@ -16,6 +16,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminUsers from './pages/admin/Users';
 import AdminRestaurants from './pages/admin/Restaurants';
 import DeliveryDashboard from './components/DeliveryDashboard';
+import DeliveryOrders from './components/DeliveryOrders';
 // import DeliveryProfile from './components/DeliveryProfile'; // Not used in original file
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -76,10 +77,12 @@ function AppContent({ currentPage, setCurrentPage }) {
             {currentPage === 'home' && <AdminDashboard />}
             {currentPage === 'users' && <AdminUsers />}
             {currentPage === 'restaurants' && <AdminRestaurants />}
+            {currentPage === 'profile' && <UserProfile />}
           </>
         ) : user.role === 'delivery' ? (
           <>
             {currentPage === 'home' && <DeliveryDashboard />}
+            {currentPage === 'orders' && <DeliveryOrders />}
             {currentPage === 'profile' && <UserProfile />}
           </>
         ) : null}

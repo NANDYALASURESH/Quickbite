@@ -34,7 +34,8 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 30,
             minimumOrderAmount: 200,
             deliveryFee: 40
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800"]
     },
     {
         name: "Spice Junction",
@@ -59,7 +60,8 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 25,
             minimumOrderAmount: 150,
             deliveryFee: 30
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800"]
     },
     {
         name: "Burger Hub",
@@ -84,7 +86,8 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 20,
             minimumOrderAmount: 180,
             deliveryFee: 35
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"]
     },
     {
         name: "Wok & Roll",
@@ -109,7 +112,8 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 28,
             minimumOrderAmount: 160,
             deliveryFee: 38
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800"]
     },
     {
         name: "Taco Fiesta",
@@ -134,7 +138,8 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 22,
             minimumOrderAmount: 170,
             deliveryFee: 32
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800"]
     },
     {
         name: "Sushi Express",
@@ -159,47 +164,48 @@ const sampleRestaurants = [
             estimatedDeliveryTime: 35,
             minimumOrderAmount: 250,
             deliveryFee: 50
-        }
+        },
+        images: ["https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=800"]
     }
 ];
 
 // Sample menu items for each restaurant
 const menuItemsData = {
     "Pizza Paradise": [
-        { name: "Margherita Pizza", description: "Classic tomato, mozzarella, and basil", price: 299, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Pepperoni Pizza", description: "Loaded with pepperoni and cheese", price: 399, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Veggie Supreme", description: "Mixed vegetables with cheese", price: 349, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Garlic Bread", description: "Crispy bread with garlic butter", price: 129, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true }
+        { name: "Margherita Pizza", description: "Classic tomato, mozzarella, and basil", price: 299, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400" },
+        { name: "Pepperoni Pizza", description: "Loaded with pepperoni and cheese", price: 399, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400" },
+        { name: "Veggie Supreme", description: "Mixed vegetables with cheese", price: 349, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1511689660979-10d2b1aada49?w=400" },
+        { name: "Garlic Bread", description: "Crispy bread with garlic butter", price: 129, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1573140401552-3fab0b24306f?w=400" }
     ],
     "Spice Junction": [
-        { name: "Butter Chicken", description: "Creamy tomato-based chicken curry", price: 320, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Paneer Tikka Masala", description: "Cottage cheese in rich gravy", price: 280, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Dal Makhani", description: "Black lentils in creamy sauce", price: 220, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Garlic Naan", description: "Soft bread with garlic", price: 60, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true }
+        { name: "Butter Chicken", description: "Creamy tomato-based chicken curry", price: 320, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400" },
+        { name: "Paneer Tikka Masala", description: "Cottage cheese in rich gravy", price: 280, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400" },
+        { name: "Dal Makhani", description: "Black lentils in creamy sauce", price: 220, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400" },
+        { name: "Garlic Naan", description: "Soft bread with garlic", price: 60, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400" }
     ],
     "Burger Hub": [
-        { name: "Classic Beef Burger", description: "Juicy beef patty with cheese", price: 249, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Veggie Burger", description: "Grilled veggie patty", price: 199, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Chicken Burger", description: "Crispy chicken with mayo", price: 229, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "French Fries", description: "Crispy golden fries", price: 99, category: "Snacks", dietary: ["vegetarian"], isAvailable: true }
+        { name: "Classic Beef Burger", description: "Juicy beef patty with cheese", price: 249, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" },
+        { name: "Veggie Burger", description: "Grilled veggie patty", price: 199, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=400" },
+        { name: "Chicken Burger", description: "Crispy chicken with mayo", price: 229, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400" },
+        { name: "French Fries", description: "Crispy golden fries", price: 99, category: "Snacks", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400" }
     ],
     "Wok & Roll": [
-        { name: "Hakka Noodles", description: "Stir-fried noodles with vegetables", price: 180, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Chicken Fried Rice", description: "Fried rice with chicken", price: 220, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Manchurian", description: "Vegetable balls in spicy sauce", price: 200, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Spring Rolls", description: "Crispy vegetable rolls", price: 150, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true }
+        { name: "Hakka Noodles", description: "Stir-fried noodles with vegetables", price: 180, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400" },
+        { name: "Chicken Fried Rice", description: "Fried rice with chicken", price: 220, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400" },
+        { name: "Manchurian", description: "Vegetable balls in spicy sauce", price: 200, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1626804475297-41608ea09aeb?w=400" },
+        { name: "Spring Rolls", description: "Crispy vegetable rolls", price: 150, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400" }
     ],
     "Taco Fiesta": [
-        { name: "Chicken Tacos", description: "3 soft tacos with chicken", price: 249, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Veggie Burrito", description: "Large burrito with beans and rice", price: 229, category: "Main Course", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Nachos Supreme", description: "Loaded nachos with cheese", price: 199, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Quesadilla", description: "Cheese quesadilla", price: 189, category: "Main Course", dietary: ["vegetarian"], isAvailable: true }
+        { name: "Chicken Tacos", description: "3 soft tacos with chicken", price: 249, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400" },
+        { name: "Veggie Burrito", description: "Large burrito with beans and rice", price: 229, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400" },
+        { name: "Nachos Supreme", description: "Loaded nachos with cheese", price: 199, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=400" },
+        { name: "Quesadilla", description: "Cheese quesadilla", price: 189, category: "Main Course", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=400" }
     ],
     "Sushi Express": [
-        { name: "California Roll", description: "Crab, avocado, cucumber", price: 350, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Vegetable Tempura", description: "Crispy fried vegetables", price: 280, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true },
-        { name: "Salmon Nigiri", description: "Fresh salmon on rice", price: 420, category: "Main Course", dietary: ["non-veg"], isAvailable: true },
-        { name: "Miso Soup", description: "Traditional Japanese soup", price: 120, category: "Soup", dietary: ["vegetarian"], isAvailable: true }
+        { name: "California Roll", description: "Crab, avocado, cucumber", price: 350, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400" },
+        { name: "Vegetable Tempura", description: "Crispy fried vegetables", price: 280, category: "Appetizer", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400" },
+        { name: "Salmon Nigiri", description: "Fresh salmon on rice", price: 420, category: "Main Course", dietary: ["non-veg"], isAvailable: true, image: "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=400" },
+        { name: "Miso Soup", description: "Traditional Japanese soup", price: 120, category: "Soup", dietary: ["vegetarian"], isAvailable: true, image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400" }
     ]
 };
 

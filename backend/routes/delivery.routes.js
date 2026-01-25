@@ -226,4 +226,30 @@ router.get('/earnings', authenticate, async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+/**
+ * @route   GET /api/delivery/orders
+ * @desc    Get delivery order history
+ * @access  Private (Delivery Person)
+ */
+router.get('/orders', authenticate, async (req, res) => {
+  try {
+    const deliveryPerson = await DeliveryPerson.findOne({ user: req.user._id });
+
+    if (!deliveryPerson) {
+      return res.status(404).json({ success: false, message: 'Not registered as delivery person' });
+    }
+
+    // Get all orders assigned to this delivery person
+    const orders = await Order.find({ deliveryPerson: deliveryPerson._id })
+      .populate('user', 'name phone')
+      .populate('restaurant', 'name address phone')
+      .sort({ createdAt: -1 }); // Most recent first
+
+    res.json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

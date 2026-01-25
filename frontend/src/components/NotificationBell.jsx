@@ -19,38 +19,29 @@ const NotificationBell = () => {
 
     const fetchNotifications = async () => {
         try {
-            // Mock notifications - replace with actual API call
-            const mockNotifications = [
-                {
-                    id: 1,
-                    type: 'order',
-                    title: 'Order Confirmed',
-                    message: 'Your order #12345 has been confirmed',
-                    timestamp: new Date(Date.now() - 5 * 60000),
-                    read: false
-                },
-                {
-                    id: 2,
-                    type: 'delivery',
-                    title: 'Out for Delivery',
-                    message: 'Your order is on the way!',
-                    timestamp: new Date(Date.now() - 15 * 60000),
-                    read: false
-                },
-                {
-                    id: 3,
-                    type: 'promo',
-                    title: 'Special Offer',
-                    message: 'Get 20% off on your next order',
-                    timestamp: new Date(Date.now() - 60 * 60000),
-                    read: true
+            // Fetch real notifications from API
+            const response = await fetch(`${API_URL}/notifications`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            ];
+            });
 
-            setNotifications(mockNotifications);
-            setUnreadCount(mockNotifications.filter(n => !n.read).length);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    setNotifications(data.notifications || []);
+                    setUnreadCount(data.notifications?.filter(n => !n.read).length || 0);
+                }
+            } else {
+                // If API fails, show empty notifications instead of mock data
+                setNotifications([]);
+                setUnreadCount(0);
+            }
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
+            // Show empty notifications on error
+            setNotifications([]);
+            setUnreadCount(0);
         }
     };
 

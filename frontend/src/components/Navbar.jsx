@@ -156,16 +156,18 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                       <span className="text-sm font-medium">My Profile</span>
                     </button>
 
-                    <button
-                      onClick={() => {
-                        setCurrentPage('orders');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
-                    >
-                      <Package size={18} />
-                      <span className="text-sm font-medium">My Orders</span>
-                    </button>
+                    {(user.role === 'user' || user.role === 'owner') && (
+                      <button
+                        onClick={() => {
+                          setCurrentPage('orders');
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
+                      >
+                        <Package size={18} />
+                        <span className="text-sm font-medium">My Orders</span>
+                      </button>
+                    )}
                   </div>
 
                   <div className="border-t border-gray-100 p-2">

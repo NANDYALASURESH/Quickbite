@@ -56,37 +56,97 @@ const UserProfile = () => {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 try {
-                    // Use reverse geocoding API (you can use Google Maps, OpenStreetMap, etc.)
-                    // For now, we'll just set coordinates and let user fill details
                     const { latitude, longitude } = position.coords;
 
-                    // Using OpenStreetMap Nominatim for reverse geocoding (free)
+                    // Using OpenStreetMap Nominatim for reverse geocoding with better parameters
                     const response = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+                        {
+                            headers: {
+                                'Accept-Language': 'en'
+                            }
+                        }
                     );
                     const data = await response.json();
 
+                    console.log('Geocoding response:', data); // For debugging
+
                     if (data.address) {
+                        // Try multiple fields for better accuracy
+                        const street = data.address.road ||
+                            data.address.pedestrian ||
+                            data.address.footway ||
+                            data.address.residential ||
+                            data.address.neighbourhood ||
+                            data.address.suburb ||
+                            data.display_name?.split(',')[0] || '';
+
+                        const city = data.address.city ||
+                            data.address.town ||
+                            data.address.village ||
+                            data.address.municipality ||
+                            data.address.county || '';
+
+                        const state = data.address.state ||
+                            data.address.state_district ||
+                            data.address.region || '';
+
+                        const zipCode = data.address.postcode || '';
+
                         setProfileData(prev => ({
                             ...prev,
                             address: {
-                                street: data.address.road || data.address.suburb || '',
-                                city: data.address.city || data.address.town || data.address.village || '',
-                                state: data.address.state || '',
-                                zipCode: data.address.postcode || ''
+                                street: street,
+                                city: city,
+                                state: state,
+                                zipCode: zipCode
                             }
                         }));
-                        setMessage({ type: 'success', text: 'Location detected! Please verify the address.' });
+
+                        setMessage({
+                            type: 'success',
+                            text: `Location detected (${latitude.toFixed(6)}, ${longitude.toFixed(6)}). Please verify and edit the address if needed.`
+                        });
+                    } else {
+                        setMessage({
+                            type: 'error',
+                            text: 'Could not determine address. Please enter manually.'
+                        });
                     }
                 } catch (error) {
-                    setMessage({ type: 'error', text: 'Failed to get address from location' });
+                    console.error('Geocoding error:', error);
+                    setMessage({
+                        type: 'error',
+                        text: 'Failed to get address from location. Please try again or enter manually.'
+                    });
                 } finally {
                     setGettingLocation(false);
                 }
             },
             (error) => {
-                setMessage({ type: 'error', text: 'Unable to retrieve your location. Please enter manually.' });
+                let errorMessage = 'Unable to retrieve your location. ';
+
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage += 'Please allow location access in your browser settings.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage += 'Location information is unavailable.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage += 'Location request timed out. Please try again.';
+                        break;
+                    default:
+                        errorMessage += 'Please enter your address manually.';
+                }
+
+                setMessage({ type: 'error', text: errorMessage });
                 setGettingLocation(false);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
             }
         );
     };

@@ -170,8 +170,8 @@ const OwnerDashboard = () => {
                       type="button"
                       onClick={() => toggleCuisine(cuisine)}
                       className={`px-4 py-2 rounded-lg font-medium transition ${formData.cuisine.includes(cuisine)
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                     >
                       {cuisine}
@@ -388,10 +388,36 @@ const OwnerDashboard = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Status</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${restaurant.isActive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                    }`}>
-                    {restaurant.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${restaurant.isActive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                      }`}>
+                      {restaurant.isActive ? 'Open' : 'Closed'}
+                    </span>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`${API_URL}/owner/restaurants/toggle-status`, {
+                            method: 'PUT',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                          });
+                          const data = await response.json();
+                          if (data.success) {
+                            setRestaurant({ ...restaurant, isActive: data.isActive });
+                          } else {
+                            alert(data.message);
+                          }
+                        } catch (error) {
+                          alert('Failed to toggle restaurant status');
+                        }
+                      }}
+                      className={`px-4 py-2 rounded-lg font-medium transition ${restaurant.isActive
+                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        : 'bg-green-500 hover:bg-green-600 text-white'
+                        }`}
+                    >
+                      {restaurant.isActive ? 'Close Restaurant' : 'Open Restaurant'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
