@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff, Mail, Lock, ChefHat, AlertCircle } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import RoleSelectionModal from '../../components/RoleSelectionModal';
+import ForgotPassword from '../../components/ForgotPassword';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''; // Add this to your .env file
 
@@ -14,6 +15,7 @@ const Login = ({ setCurrentPage }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [pendingCredential, setPendingCredential] = useState(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,6 +122,10 @@ const Login = ({ setCurrentPage }) => {
           setPendingCredential(null);
         }}
         onSelectRole={handleRoleSelect}
+      />
+      <ForgotPassword
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
       />
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <div className="min-h-screen w-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-orange-200 via-red-200 to-red-300">
@@ -261,9 +267,12 @@ const Login = ({ setCurrentPage }) => {
               {/* Footer Links */}
               <div className="mt-8 text-center flex flex-col gap-2">
                 <div>
-                  <a href="#" className="text-sm text-gray-600 hover:text-orange-500 transition-colors duration-300 no-underline">
+                  <button
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
+                  >
                     Forgot your password?
-                  </a>
+                  </button>
                 </div>
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
