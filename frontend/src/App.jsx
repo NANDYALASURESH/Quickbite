@@ -4,7 +4,6 @@ import Loader from './components/Loader';
 import Welcome from './pages/Welcome';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import ResetPassword from './pages/auth/ResetPassword';
 import UserHome from './pages/user/Home';
 import UserRestaurants from './pages/user/Restaurants';
 import UserCart from './pages/user/Cart';
@@ -55,8 +54,6 @@ function AppContent({ currentPage, setCurrentPage }) {
             <Register setCurrentPage={setCurrentPage} />
           ) : currentPage === 'login' ? (
             <Login setCurrentPage={setCurrentPage} />
-          ) : currentPage.startsWith('reset-password') ? (
-            <ResetPassword setCurrentPage={setCurrentPage} />
           ) : (
             <Welcome setCurrentPage={setCurrentPage} />
           )
