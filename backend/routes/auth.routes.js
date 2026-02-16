@@ -932,8 +932,9 @@ router.post('/verify-otp', async (req, res) => {
       });
     }
 
-    // Verify OTP
-    if (user.emailVerificationOTP !== otp) {
+    // Verify OTP (ensure string comparison)
+    if (String(user.emailVerificationOTP).trim() !== String(otp).trim()) {
+      console.log('OTP mismatch - stored:', user.emailVerificationOTP, 'received:', otp);
       return res.status(400).json({
         success: false,
         message: 'Invalid OTP. Please try again.'
