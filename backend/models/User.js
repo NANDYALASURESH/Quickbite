@@ -77,6 +77,15 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: {
     type: Date,
     select: false
+  },
+  // Email verification OTP fields
+  emailVerificationOTP: {
+    type: String,
+    select: false
+  },
+  otpExpire: {
+    type: Date,
+    select: false
   }
 }, {
   timestamps: true
@@ -123,6 +132,18 @@ userSchema.methods.getResetPasswordToken = function () {
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
+};
+
+// Generate 6-digit OTP for email verification
+userSchema.methods.generateOTP = function () {
+  // Generate random 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Save OTP and expiration (10 minutes)
+  this.emailVerificationOTP = otp;
+  this.otpExpire = Date.now() + 10 * 60 * 1000;
+
+  return otp;
 };
 
 module.exports = mongoose.model('User', userSchema);

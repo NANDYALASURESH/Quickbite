@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ChefHat, AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone, MapPin } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import OTPVerification from '../../components/OTPVerification';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -25,6 +26,8 @@ const Register = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   // Password strength calculation
   const calculatePasswordStrength = (password) => {
@@ -67,13 +70,35 @@ const Register = ({ setCurrentPage }) => {
 
     setLoading(true);
 
-    const { confirmPassword, ...registerData } = formData;
-    const result = await register(registerData);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+          phone: formData.phone,
+          address: formData.address
+        })
+      });
 
-    if (!result.success) {
-      setError(result.message);
+      const data = await response.json();
+
+      if (data.success && data.requiresVerification) {
+        // Show OTP verification modal
+        setRegisteredEmail(formData.email);
+        setShowOTPVerification(true);
+        setError('');
+      } else if (!data.success) {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -438,6 +463,18 @@ const Register = ({ setCurrentPage }) => {
             </div>
           </div>
         </div>
+
+        {/* OTP Verification Modal */}
+        {showOTPVerification && (
+          <OTPVerification
+            email={registeredEmail}
+            onSuccess={() => {
+              setShowOTPVerification(false);
+              setCurrentPage('login');
+            }}
+            onClose={() => setShowOTPVerification(false)}
+          />
+        )}
       </div>
     </GoogleOAuthProvider>
   );
