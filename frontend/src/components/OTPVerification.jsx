@@ -94,7 +94,7 @@ const OTPVerification = ({ email, onSuccess, onClose }) => {
         setError('');
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp: fullOtp })
@@ -127,7 +127,7 @@ const OTPVerification = ({ email, onSuccess, onClose }) => {
         setSuccess('');
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/resend-otp`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/resend-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
