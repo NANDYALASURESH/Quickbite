@@ -5,7 +5,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
@@ -25,6 +28,7 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             if (data.success) {
                 setUser(data.user);
+                localStorage.setItem('user', JSON.stringify(data.user));
             } else {
                 logout();
             }
@@ -48,6 +52,7 @@ export const AuthProvider = ({ children }) => {
                 setToken(data.token);
                 setUser(data.user);
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
                 return { success: true };
             }
             return { success: false, message: data.message };
@@ -68,6 +73,7 @@ export const AuthProvider = ({ children }) => {
                 setToken(data.token);
                 setUser(data.user);
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
                 return { success: true };
             }
             return { success: false, message: data.message };
@@ -80,6 +86,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setToken(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
     };
 
     return (
