@@ -17,6 +17,17 @@ const Login = ({ setCurrentPage }) => {
   const [pendingCredential, setPendingCredential] = useState(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
+  const sampleAccounts = [
+    { role: 'admin', email: 'admin@quickbite.com', password: 'password123', label: 'Admin', icon: '🛡️', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+    { role: 'owner', email: 'owner@quickbite.com', password: 'password123', label: 'Owner', icon: '👨‍🍳', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+    { role: 'delivery', email: 'delivery@quickbite.com', password: 'password123', label: 'Delivery', icon: '🏍️', color: 'bg-green-100 text-green-700 border-green-200' },
+    { role: 'user', email: 'customer@quickbite.com', password: 'password123', label: 'Customer', icon: '🛍️', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' }
+  ];
+
+  const handleSampleLogin = (account) => {
+    setFormData({ email: account.email, password: account.password });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -272,6 +283,29 @@ const Login = ({ setCurrentPage }) => {
                   </div>
                 </div>
               )}
+
+              {/* Sample Login for Recruiters */}
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                  Sample Login for Recruiters
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {sampleAccounts.map((account) => (
+                    <button
+                      key={account.role}
+                      type="button"
+                      onClick={() => handleSampleLogin(account)}
+                      className={`flex items-center p-3 rounded-xl border transition-all duration-300 hover:scale-105 active:scale-95 ${account.color}`}
+                    >
+                      <span className="text-xl mr-2">{account.icon}</span>
+                      <div className="text-left">
+                        <div className="text-xs font-bold">{account.label}</div>
+                        <div className="text-[10px] opacity-80 truncate w-24">Click to fill</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               {/* Footer Links */}
               <div className="mt-8 text-center flex flex-col gap-2">
