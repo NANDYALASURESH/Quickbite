@@ -1,20 +1,21 @@
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff, Mail, Lock, ChefHat, AlertCircle } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import RoleSelectionModal from '../../components/RoleSelectionModal';
+import ForgotPassword from '../../components/ForgotPassword';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''; // Add this to your .env file
 
-const Login = () => {
+const Login = ({ setCurrentPage }) => {
   const { login } = useAuth();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [pendingCredential, setPendingCredential] = useState(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const sampleAccounts = [
     { role: 'admin', email: 'admin@quickbite.com', password: 'password123', label: 'Admin', icon: '🛡️', color: 'bg-purple-100 text-purple-700 border-purple-200' },
@@ -34,7 +35,7 @@ const Login = () => {
 
     const result = await login(formData.email, formData.password);
     if (result.success) {
-      navigate('/');
+      setCurrentPage('home');
     } else {
       setError(result.message);
     }
@@ -71,7 +72,7 @@ const Login = () => {
         // Existing user - login directly
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/');
+        setCurrentPage('home');
       } else if (data.requiresRole || (data.message && data.message.includes('Role selection required'))) {
         // New user - show role selection modal
         setPendingCredential(credentialResponse.credential);
@@ -96,7 +97,7 @@ const Login = () => {
       setLoading(true);
       setError('');
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/auth/google`, {
         method: 'POST',
         headers: {
@@ -116,7 +117,7 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(data.user));
 
         // Trigger auth state update and redirect
-        navigate('/');
+        setCurrentPage('home');
       } else {
         setError(data.message || 'Google login failed');
       }
@@ -143,6 +144,10 @@ const Login = () => {
           setPendingCredential(null);
         }}
         onSelectRole={handleRoleSelect}
+      />
+      <ForgotPassword
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
       />
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <div className="min-h-screen w-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-orange-200 via-red-200 to-red-300">
@@ -306,10 +311,18 @@ const Login = () => {
 
               {/* Footer Links */}
               <div className="mt-8 text-center flex flex-col gap-2">
+                <div>
+                  <button
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
+                  >
+                    Forgot your password?
+                  </button>
+                </div>
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
                   <button
-                    onClick={() => navigate('/register')}
+                    onClick={() => setCurrentPage('register')}
                     className="text-orange-500 font-medium hover:text-orange-600 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                   >
                     Register here
@@ -317,7 +330,7 @@ const Login = () => {
                 </p>
                 <p className="text-sm text-gray-600">
                   <button
-                    onClick={() => navigate('/')}
+                    onClick={() => setCurrentPage('home')}
                     className="text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                   >
                     ← Back to Home

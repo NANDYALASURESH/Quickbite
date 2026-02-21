@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ChefHat, AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone, MapPin } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
@@ -7,9 +6,8 @@ import OTPVerification from '../../components/OTPVerification';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-const Register = () => {
+const Register = ({ setCurrentPage }) => {
   const { register } = useAuth();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -72,9 +70,8 @@ const Register = () => {
 
     setLoading(true);
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     try {
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -109,7 +106,7 @@ const Register = () => {
       setLoading(true);
       setError('');
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const apiUrl = import.meta.env.VITE_API_URL;
       const response = await fetch(`${apiUrl}/auth/google`, {
         method: 'POST',
         headers: {
@@ -126,7 +123,7 @@ const Register = () => {
       if (data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/');
+        setCurrentPage('home');
       } else {
         setError(data.message || 'Google registration failed');
       }
@@ -449,7 +446,7 @@ const Register = () => {
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => setCurrentPage('login')}
                   className="text-orange-500 font-medium hover:text-orange-600 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 >
                   Login here
@@ -457,7 +454,7 @@ const Register = () => {
               </p>
               <p className="text-sm text-gray-600 mt-2">
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => setCurrentPage('home')}
                   className="text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 >
                   ← Back to Home
@@ -473,7 +470,7 @@ const Register = () => {
             email={registeredEmail}
             onSuccess={() => {
               setShowOTPVerification(false);
-              navigate('/login');
+              setCurrentPage('login');
             }}
             onClose={() => setShowOTPVerification(false)}
           />

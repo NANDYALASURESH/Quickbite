@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   Store, Star, Clock, Search, ChefHat,
@@ -8,8 +7,7 @@ import {
 import Loader from '../../components/Loader';
 import homeHeroImage from '../../assets/home_hero.png';
 
-const UserHome = () => {
-  const navigate = useNavigate();
+const UserHome = ({ setCurrentPage }) => {
   const { token, API_URL } = useAuth();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -155,7 +153,7 @@ const UserHome = () => {
           </div>
 
           <button
-            onClick={() => navigate('/restaurants')}
+            onClick={() => setCurrentPage('restaurants')}
             className="hidden sm:flex items-center space-x-2 text-orange-500 font-semibold hover:text-orange-600 transition"
           >
             <span>View All</span>
@@ -186,7 +184,7 @@ const UserHome = () => {
                 className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group border border-gray-100"
                 onClick={() => {
                   localStorage.setItem('selectedRestaurant', JSON.stringify(restaurant));
-                  navigate('/restaurants');
+                  setCurrentPage('restaurants');
                 }}
               >
                 {/* Restaurant Image */}

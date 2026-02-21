@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import NotificationBell from './NotificationBell';
@@ -8,36 +7,11 @@ import {
   Package, Store, Users, User, Bell, Search
 } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ currentPage, setCurrentPage }) => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { cartItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-
-  // Map locations to ids
-  const pathToId = {
-    '/': 'home',
-    '/restaurants': 'restaurants',
-    '/cart': 'cart',
-    '/orders': 'orders',
-    '/users': 'users',
-    '/profile': 'profile',
-    '/menu': 'menu'
-  };
-
-  const idToPath = {
-    home: '/',
-    restaurants: '/restaurants',
-    cart: '/cart',
-    orders: '/orders',
-    users: '/users',
-    profile: '/profile',
-    menu: '/menu'
-  };
-
-  const currentId = pathToId[location.pathname] || 'home';
 
   const getNavItems = () => {
     if (user.role === 'user') {
@@ -88,7 +62,7 @@ const Navbar = () => {
           {/* Logo */}
           <div
             className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group"
-            onClick={() => navigate('/')}
+            onClick={() => setCurrentPage('home')}
           >
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all group-hover:scale-105">
               <ChefHat className="text-white" size={24} />
@@ -110,8 +84,8 @@ const Navbar = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => navigate(idToPath[item.id])}
-                  className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all ${currentId === item.id
+                  onClick={() => setCurrentPage(item.id)}
+                  className={`relative flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all ${isActive
                     ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30'
                     : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                     }`}
@@ -173,7 +147,7 @@ const Navbar = () => {
                   <div className="p-2">
                     <button
                       onClick={() => {
-                        navigate('/profile');
+                        setCurrentPage('profile');
                         setShowUserMenu(false);
                       }}
                       className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
@@ -185,7 +159,7 @@ const Navbar = () => {
                     {(user.role === 'user' || user.role === 'owner') && (
                       <button
                         onClick={() => {
-                          navigate('/orders');
+                          setCurrentPage('orders');
                           setShowUserMenu(false);
                         }}
                         className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-all text-left"
@@ -245,33 +219,38 @@ const Navbar = () => {
             </div>
 
             {/* Nav Items - Mobile */}
-            {navItems.map(item => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  navigate(idToPath[item.id]);
-                  setIsMenuOpen(false);
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all relative ${currentId === item.id
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                  : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
-                  }`}
-              >
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
+            {navItems.map(item => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.id;
 
-                {item.badge > 0 && (
-                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            ))}
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentPage(item.id);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all relative ${isActive
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+                    }`}
+                >
+                  <Icon size={20} />
+                  <span className="font-medium">{item.label}</span>
+
+                  {item.badge > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
 
             {/* Profile - Mobile */}
             <button
               onClick={() => {
-                navigate('/profile');
+                setCurrentPage('profile');
                 setIsMenuOpen(false);
               }}
               className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all"
