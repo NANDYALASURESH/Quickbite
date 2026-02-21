@@ -34,7 +34,7 @@ const Login = ({ setCurrentPage }) => {
       setLoading(true);
       setError('');
 
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
       // First, try to login without role (for existing users)
       const response = await fetch(`${apiUrl}/auth/google`, {
@@ -47,6 +47,11 @@ const Login = ({ setCurrentPage }) => {
           // Don't send role for existing users
         }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
 
       const data = await response.json();
 
@@ -64,7 +69,11 @@ const Login = ({ setCurrentPage }) => {
       }
     } catch (err) {
       console.error('Google login error:', err);
-      setError('Failed to login with Google. Please try again.');
+      if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+        setError('Cannot connect to server. Please ensure the backend is running.');
+      } else {
+        setError(`Failed to login with Google: ${err.message}`);
+      }
     } finally {
       setLoading(false);
     }
