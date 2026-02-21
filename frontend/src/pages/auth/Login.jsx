@@ -34,7 +34,9 @@ const Login = ({ setCurrentPage }) => {
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
-    if (!result.success) {
+    if (result.success) {
+      setCurrentPage('home');
+    } else {
       setError(result.message);
     }
     setLoading(false);
@@ -70,7 +72,7 @@ const Login = ({ setCurrentPage }) => {
         // Existing user - login directly
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.reload();
+        setCurrentPage('home');
       } else if (data.requiresRole || (data.message && data.message.includes('Role selection required'))) {
         // New user - show role selection modal
         setPendingCredential(credentialResponse.credential);
@@ -114,8 +116,8 @@ const Login = ({ setCurrentPage }) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        // Trigger auth context update
-        window.location.reload();
+        // Trigger auth state update and redirect
+        setCurrentPage('home');
       } else {
         setError(data.message || 'Google login failed');
       }

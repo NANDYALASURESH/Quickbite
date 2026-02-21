@@ -123,7 +123,7 @@ const Register = ({ setCurrentPage }) => {
       if (data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.reload();
+        setCurrentPage('home');
       } else {
         setError(data.message || 'Google registration failed');
       }
