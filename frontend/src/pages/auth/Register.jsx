@@ -70,8 +70,9 @@ const Register = ({ setCurrentPage }) => {
 
     setLoading(true);
 
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+      const response = await fetch(`${apiUrl}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +107,7 @@ const Register = ({ setCurrentPage }) => {
       setLoading(true);
       setError('');
 
-      const apiUrl = import.meta.env.VITE_API_URL;
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const response = await fetch(`${apiUrl}/auth/google`, {
         method: 'POST',
         headers: {
