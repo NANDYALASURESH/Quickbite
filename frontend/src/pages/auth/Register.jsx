@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ChefHat, AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone, MapPin } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
@@ -6,8 +7,9 @@ import OTPVerification from '../../components/OTPVerification';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-const Register = ({ setCurrentPage }) => {
+const Register = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -124,7 +126,7 @@ const Register = ({ setCurrentPage }) => {
       if (data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        setCurrentPage('home');
+        navigate('/');
       } else {
         setError(data.message || 'Google registration failed');
       }
@@ -447,7 +449,7 @@ const Register = ({ setCurrentPage }) => {
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
                 <button
-                  onClick={() => setCurrentPage('login')}
+                  onClick={() => navigate('/login')}
                   className="text-orange-500 font-medium hover:text-orange-600 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 >
                   Login here
@@ -455,7 +457,7 @@ const Register = ({ setCurrentPage }) => {
               </p>
               <p className="text-sm text-gray-600 mt-2">
                 <button
-                  onClick={() => setCurrentPage('home')}
+                  onClick={() => navigate('/')}
                   className="text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                 >
                   ← Back to Home
@@ -471,7 +473,7 @@ const Register = ({ setCurrentPage }) => {
             email={registeredEmail}
             onSuccess={() => {
               setShowOTPVerification(false);
-              setCurrentPage('login');
+              navigate('/login');
             }}
             onClose={() => setShowOTPVerification(false)}
           />

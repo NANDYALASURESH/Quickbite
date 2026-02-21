@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { Store, Star, Clock, Plus, Minus, ShoppingCart, X, Search, Filter } from 'lucide-react';
@@ -6,7 +7,8 @@ import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 
 // Updated: 2026-01-25 05:50 - Images should now display
-const UserRestaurants = ({ setCurrentPage }) => {
+const UserRestaurants = () => {
+  const navigate = useNavigate();
   const { token, API_URL } = useAuth();
   const { addToCart, cartItems } = useCart();
   const [restaurants, setRestaurants] = useState([]);
@@ -157,7 +159,7 @@ const UserRestaurants = ({ setCurrentPage }) => {
               </div>
 
               <button
-                onClick={() => setCurrentPage('cart')}
+                onClick={() => navigate('/cart')}
                 className="mt-4 md:mt-0 flex items-center space-x-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition relative"
               >
                 <ShoppingCart size={20} />

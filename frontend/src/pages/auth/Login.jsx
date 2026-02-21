@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff, Mail, Lock, ChefHat, AlertCircle } from 'lucide-react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
@@ -6,8 +6,9 @@ import RoleSelectionModal from '../../components/RoleSelectionModal';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''; // Add this to your .env file
 
-const Login = ({ setCurrentPage }) => {
+const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ const Login = ({ setCurrentPage }) => {
 
     const result = await login(formData.email, formData.password);
     if (result.success) {
-      setCurrentPage('home');
+      navigate('/');
     } else {
       setError(result.message);
     }
@@ -70,7 +71,7 @@ const Login = ({ setCurrentPage }) => {
         // Existing user - login directly
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        setCurrentPage('home');
+        navigate('/');
       } else if (data.requiresRole || (data.message && data.message.includes('Role selection required'))) {
         // New user - show role selection modal
         setPendingCredential(credentialResponse.credential);
@@ -115,7 +116,7 @@ const Login = ({ setCurrentPage }) => {
         localStorage.setItem('user', JSON.stringify(data.user));
 
         // Trigger auth state update and redirect
-        setCurrentPage('home');
+        navigate('/');
       } else {
         setError(data.message || 'Google login failed');
       }
@@ -308,7 +309,7 @@ const Login = ({ setCurrentPage }) => {
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
                   <button
-                    onClick={() => setCurrentPage('register')}
+                    onClick={() => navigate('/register')}
                     className="text-orange-500 font-medium hover:text-orange-600 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                   >
                     Register here
@@ -316,7 +317,7 @@ const Login = ({ setCurrentPage }) => {
                 </p>
                 <p className="text-sm text-gray-600">
                   <button
-                    onClick={() => setCurrentPage('home')}
+                    onClick={() => navigate('/')}
                     className="text-gray-600 hover:text-orange-500 transition-colors duration-300 bg-transparent border-none cursor-pointer"
                   >
                     ← Back to Home

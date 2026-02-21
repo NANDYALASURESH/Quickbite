@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, Shield, Star, ChefHat, Truck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const Welcome = ({ setCurrentPage }) => {
+const Welcome = () => {
+    const navigate = useNavigate();
     const [currentFeature, setCurrentFeature] = useState(0);
     const [orderAnimation, setOrderAnimation] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -21,7 +22,7 @@ const Welcome = ({ setCurrentPage }) => {
         setOrderAnimation(true);
         setTimeout(() => {
             setOrderAnimation(false);
-            setCurrentPage('login');
+            navigate('/login');
         }, 1000);
     };
 
@@ -83,7 +84,7 @@ const Welcome = ({ setCurrentPage }) => {
                     </nav>
 
                     <button
-                        onClick={() => setCurrentPage('login')}
+                        onClick={() => navigate('/login')}
                         className="cursor-pointer bg-orange-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm sm:text-base"
                     >
                         Sign In
@@ -118,7 +119,7 @@ const Welcome = ({ setCurrentPage }) => {
                             </button>
 
                             <button
-                                onClick={() => setCurrentPage('login')}
+                                onClick={() => navigate('/login')}
                                 className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-orange-500 hover:text-orange-500 transition-all duration-300"
                             >
                                 View Menu
@@ -246,13 +247,13 @@ const Welcome = ({ setCurrentPage }) => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => setCurrentPage('login')}
+                            onClick={() => navigate('/login')}
                             className="bg-white text-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all"
                         >
                             Get Started
                         </button>
                         <button
-                            onClick={() => setCurrentPage('login')}
+                            onClick={() => navigate('/login')}
                             className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-orange-500 transition-all"
                         >
                             Sign In

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { ShoppingCart, Plus, Minus, Trash2, Store, AlertCircle } from 'lucide-react';
 import Modal from '../../components/Modal';
 
-const UserCart = ({ setCurrentPage }) => {
+const UserCart = () => {
+  const navigate = useNavigate();
   const { token, API_URL, user } = useAuth();
   const { cartItems, restaurant, updateQuantity, removeFromCart, clearCart, getTotal } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
@@ -111,7 +113,7 @@ const UserCart = ({ setCurrentPage }) => {
       if (data.success) {
         clearCart();
         alert('Order placed successfully!');
-        setCurrentPage('orders');
+        navigate('/orders');
       } else {
         setError(data.message);
       }
@@ -130,7 +132,7 @@ const UserCart = ({ setCurrentPage }) => {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
           <p className="text-gray-600 mb-6">Add items from restaurants to get started</p>
           <button
-            onClick={() => setCurrentPage('restaurants')}
+            onClick={() => navigate('/restaurants')}
             className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
           >
             Browse Restaurants

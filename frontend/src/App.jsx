@@ -17,27 +17,27 @@ import AdminUsers from './pages/admin/Users';
 import AdminRestaurants from './pages/admin/Restaurants';
 import DeliveryDashboard from './components/DeliveryDashboard';
 import DeliveryOrders from './components/DeliveryOrders';
-// import DeliveryProfile from './components/DeliveryProfile'; // Not used in original file
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 
 // Main App Component
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-
   return (
     <ToastProvider>
-      <AuthProvider>
-        <CartProvider>
-          <AppContent currentPage={currentPage} setCurrentPage={setCurrentPage} />
-        </CartProvider>
-      </AuthProvider>
+      <Router>
+        <AuthProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </AuthProvider>
+      </Router>
     </ToastProvider>
   );
 }
 
-function AppContent({ currentPage, setCurrentPage }) {
+function AppContent() {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -46,46 +46,62 @@ function AppContent({ currentPage, setCurrentPage }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {user && <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+      {user && <Navbar />}
 
       <main>
-        {!user ? (
-          currentPage === 'register' ? (
-            <Register setCurrentPage={setCurrentPage} />
-          ) : currentPage === 'login' ? (
-            <Login setCurrentPage={setCurrentPage} />
+        <Routes>
+          {/* Public Routes */}
+          {!user ? (
+            <>
+              <Route path="/" element={<Welcome />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </>
           ) : (
-            <Welcome setCurrentPage={setCurrentPage} />
-          )
-        ) : user.role === 'user' ? (
-          <>
-            {currentPage === 'home' && <UserHome setCurrentPage={setCurrentPage} />}
-            {currentPage === 'restaurants' && <UserRestaurants setCurrentPage={setCurrentPage} />}
-            {currentPage === 'cart' && <UserCart setCurrentPage={setCurrentPage} />}
-            {currentPage === 'orders' && <UserOrders />}
-            {currentPage === 'profile' && <UserProfile />}
-          </>
-        ) : user.role === 'owner' ? (
-          <>
-            {currentPage === 'home' && <OwnerDashboard />}
-            {currentPage === 'menu' && <OwnerMenu />}
-            {currentPage === 'orders' && <OwnerOrders />}
-            {currentPage === 'profile' && <UserProfile />}
-          </>
-        ) : user.role === 'admin' ? (
-          <>
-            {currentPage === 'home' && <AdminDashboard />}
-            {currentPage === 'users' && <AdminUsers />}
-            {currentPage === 'restaurants' && <AdminRestaurants />}
-            {currentPage === 'profile' && <UserProfile />}
-          </>
-        ) : user.role === 'delivery' ? (
-          <>
-            {currentPage === 'home' && <DeliveryDashboard />}
-            {currentPage === 'orders' && <DeliveryOrders />}
-            {currentPage === 'profile' && <UserProfile />}
-          </>
-        ) : null}
+            <>
+              {/* Role-Based Routes */}
+              {user.role === 'user' && (
+                <>
+                  <Route path="/" element={<UserHome />} />
+                  <Route path="/restaurants" element={<UserRestaurants />} />
+                  <Route path="/cart" element={<UserCart />} />
+                  <Route path="/orders" element={<UserOrders />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                </>
+              )}
+
+              {user.role === 'owner' && (
+                <>
+                  <Route path="/" element={<OwnerDashboard />} />
+                  <Route path="/menu" element={<OwnerMenu />} />
+                  <Route path="/orders" element={<OwnerOrders />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                </>
+              )}
+
+              {user.role === 'admin' && (
+                <>
+                  <Route path="/" element={<AdminDashboard />} />
+                  <Route path="/users" element={<AdminUsers />} />
+                  <Route path="/restaurants" element={<AdminRestaurants />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                </>
+              )}
+
+              {user.role === 'delivery' && (
+                <>
+                  <Route path="/" element={<DeliveryDashboard />} />
+                  <Route path="/orders" element={<DeliveryOrders />} />
+                  <Route path="/profile" element={<UserProfile />} />
+                </>
+              )}
+
+              {/* Redirect any other logged in route to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </>
+          )}
+        </Routes>
       </main>
     </div>
   );
